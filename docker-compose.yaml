@@ -1,0 +1,11 @@
+services:
+        pretrain:
+                image: nuneslu/tarl:latest
+                runtime: nvidia
+                ipc: host
+                environment:
+                      - NVIDIA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES
+                volumes: 
+                      - $PWD:/home/TARL
+                      - $PWD/Datasets/:/home/TARL/Datasets
+

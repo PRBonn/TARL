@@ -1,9 +1,10 @@
 torch==1.9.0
 ninja==1.10.2.3
-numpy==1.22.3
+numpy
 #MinkowskiEngine==0.5.4
 click==8.0.4
 pytorch_lightning==1.5.10
 hdbscan==0.8.28
 open3d==0.13.0
-scipy==1.8.0
+scipy
+joblib==1.1.0
