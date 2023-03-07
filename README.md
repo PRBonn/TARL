@@ -61,6 +61,14 @@ For the unsupervised ground segmentation, you need to run [patchwork](https://gi
                     └── ...
 ```
 
+For SemanticKITTI we have available [here](https://www.ipb.uni-bonn.de/html/projects/tarl/ground_labels.zip) the ground segment labels to be used in
+our pre-training.
+
+**Note** that using patchwork is **not** the only option to have ground prediction. Among other options one could for example use ransac implementation
+from Open3D which would give also a ground estimation (as done by SegContrast). We have also implemented this option you could use ransac by setting
+in the config file the flag `use_ground_pred: False`. However, we recommend using patchwork since the ground segmentation is more accurate.
+
+
 ## Running the code
 
 The command to run the pre-training is:
@@ -70,6 +78,10 @@ python3 tarl_train.py
 ```
 
 In the `config/config.yaml` the parameters used in our experiments are already set.
+
+## Pre-trained weights
+
+- TARL MinkUNet pre-trained [weights](https://www.ipb.uni-bonn.de/html/projects/tarl/lastepoch199_model_tarl.pt)
 
 ---
 
