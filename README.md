@@ -79,6 +79,9 @@ python3 tarl_train.py
 
 In the `config/config.yaml` the parameters used in our experiments are already set.
 
+Note that, the first epoch will take longer to train since we generate the segments over the aggregated scans and save them to disk. However, after
+the first epoch the training should be first since it is just necessary to load the segments from disk.
+
 ## Pre-trained weights
 
 - TARL MinkUNet pre-trained [weights](https://www.ipb.uni-bonn.de/html/projects/tarl/lastepoch199_model_tarl.pt)
