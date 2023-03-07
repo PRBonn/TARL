@@ -70,3 +70,32 @@ python3 tarl_train.py
 ```
 
 In the `config/config.yaml` the parameters used in our experiments are already set.
+
+---
+
+# Fine-tuning
+
+For fine-tuning we have used repositories from the baselines, so after pre-training with TARL you should copy the pre-trained weights to the target task and use it for fine-tuning.
+
+## Semantic segmentation
+
+For fine-tuning to semantic segmentation we refer to the SegContrast [repo](https://github.com/PRBonn/segcontrast).
+Clone the repo with `git clone https://github.com/PRBonn/segcontrast.git` and follow the installation instructions. Note that the requirements from
+TARL and segcontrast are similar since both use `MinkowskiEngine` so you should be able to use the same environment than TARL just installing
+the remaining packages missing.
+
+After setting up the packages, copy the pre-trained model from `TARL/tarl/experiments/TARL/default/version_0/checkpoints/last.ckpt` to `segcontrast/checkpoint/contrastive/lastepoch199_model_tarl.pt` and run the following command:
+
+```python3 downstream_train.py --use-cuda --use-intensity --checkpoint \
+        tarl --contrastive --load-checkpoint --batch-size 2 \
+        --sparse-model MinkUNet --epochs 15```
+
+# Object detection
+
+For object detection we have used the OpenPCDet [repo](https://github.com/zaiweizhang/OpenPCDet) with few modifications. In this docker [image](https://hub.docker.com/r/nuneslu/segcontrast_openpcdet) we have setted up everything to run it with `MinkUNet` and to load our pre-trained weights.
+The weights should be copied to `/tmp/OpenPCDet/pretrained/lastepoch199_model_tarl.pt` inside the container and then running the command:
+
+```
+cd /tmp/OpenPCDet/tools
+python3 train.py --cfg_file cfgs/kitti_models/tarl_pretrained.yaml --pretrained_model ../pretrained/lastepoch199_model_tarl.pt
+```
