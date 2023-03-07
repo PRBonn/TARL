@@ -18,7 +18,7 @@ class TemporalKITTISet(Dataset):
     def __init__(self, data_dir, scan_window, seqs, split, resolution, percentage, intensity_channel, use_ground_pred=True, num_points=80000):
         super().__init__()
         self.data_dir = data_dir
-        self.augmented_dir = 'segments_views_'
+        self.augmented_dir = 'segments_views'
 
         self.n_clusters = 50
         self.resolution = resolution
