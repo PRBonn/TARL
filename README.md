@@ -84,16 +84,12 @@ the first epoch the training should be first since it is just necessary to load 
 
 ## Docker
 
-We have also a `Dockerfile` in `docker/` directory to make things easy to run. You can build the docker image locally with:
+We have also a `Dockerfile` in `docker/` directory to make things easy to run. You can build the docker image locally in case any changes
+regarding CUDA is needed with:
 
-```docker build . -t tarl```
+```docker build . -t nuneslu/tarl:latest```
 
-Or we have it also upload to docker hub:
-
-```docker pull nuneslu/tarl:latest```
-
-
-And then run it with:
+In case it is not needed, you can run it directly with docker-compose and the image will be downloaded from docker hub:
 
 ```CUDA_VISIBLE_DEVICES=0 docker-compose run pretrain python3 tarl_train.py```
 
