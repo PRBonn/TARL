@@ -61,6 +61,14 @@ For the unsupervised ground segmentation, you need to run [patchwork](https://gi
                     └── ...
 ```
 
+For SemanticKITTI we have available [here](https://www.ipb.uni-bonn.de/html/projects/tarl/ground_labels.zip) the ground segment labels to be used in
+our pre-training.
+
+**Note** that using patchwork is **not** the only option to have ground prediction. Among other options one could for example use ransac implementation
+from Open3D which would give also a ground estimation (as done by SegContrast). We have also implemented this option you could use ransac by setting
+in the config file the flag `use_ground_pred: False`. However, we recommend using patchwork since the ground segmentation is more accurate.
+
+
 ## Running the code
 
 The command to run the pre-training is:
@@ -70,3 +78,38 @@ python3 tarl_train.py
 ```
 
 In the `config/config.yaml` the parameters used in our experiments are already set.
+
+## Pre-trained weights
+
+- TARL MinkUNet pre-trained [weights](https://www.ipb.uni-bonn.de/html/projects/tarl/lastepoch199_model_tarl.pt)
+
+---
+
+# Fine-tuning
+
+For fine-tuning we have used repositories from the baselines, so after pre-training with TARL you should copy the pre-trained weights to the target task and use it for fine-tuning.
+
+## Semantic segmentation
+
+For fine-tuning to semantic segmentation we refer to the SegContrast [repo](https://github.com/PRBonn/segcontrast).
+Clone the repo with `git clone https://github.com/PRBonn/segcontrast.git` and follow the installation instructions. Note that the requirements from
+TARL and segcontrast are similar since both use `MinkowskiEngine` so you should be able to use the same environment than TARL just installing
+the remaining packages missing.
+
+After setting up the packages, copy the pre-trained model from `TARL/tarl/experiments/TARL/default/version_0/checkpoints/last.ckpt` to `segcontrast/checkpoint/contrastive/lastepoch199_model_tarl.pt` and run the following command:
+
+```
+python3 downstream_train.py --use-cuda --use-intensity --checkpoint \
+        tarl --contrastive --load-checkpoint --batch-size 2 \
+        --sparse-model MinkUNet --epochs 15
+```
+
+# Object detection
+
+For object detection we have used the OpenPCDet [repo](https://github.com/zaiweizhang/OpenPCDet) with few modifications. In this docker [image](https://hub.docker.com/r/nuneslu/segcontrast_openpcdet) we have setted up everything to run it with `MinkUNet` and to load our pre-trained weights.
+The weights should be copied to `/tmp/OpenPCDet/pretrained/lastepoch199_model_tarl.pt` inside the container and then running the command:
+
+```
+cd /tmp/OpenPCDet/tools
+python3 train.py --cfg_file cfgs/kitti_models/tarl_pretrained.yaml --pretrained_model ../pretrained/lastepoch199_model_tarl.pt
+```
