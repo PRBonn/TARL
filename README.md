@@ -84,9 +84,14 @@ the first epoch the training should be first since it is just necessary to load 
 
 ## Docker
 
-We have also a `Dockerfile` in `docker/` directory to make things easy to run. You can build the docker image with:
+We have also a `Dockerfile` in `docker/` directory to make things easy to run. You can build the docker image locally with:
 
-```docker build . -t nuneslu/tarl:latest```
+```docker build . -t tarl```
+
+Or we have it also upload to docker hub:
+
+```docker pull nuneslu/tarl:latest```
+
 
 And then run it with:
 
