@@ -14,11 +14,11 @@ warnings.filterwarnings('ignore')
 ################## Data loader ##################
 #################################################
 
-class TemporalKITTISet(Dataset):
-    def __init__(self, data_dir, scan_window, seqs, split, resolution, percentage, intensity_channel, use_ground_pred=True, num_points=80000):
+class TemplateSet(Dataset):
+    def __init__(self, data_dir, scan_window, seqs, split, pre_training, resolution, percentage, intensity_channel, num_points=80000):
         super().__init__()
         self.data_dir = data_dir
-        self.augmented_dir = 'segments_views_'
+        self.augmented_dir = 'segments_views'
 
         self.n_clusters = 50
         self.resolution = resolution
@@ -32,9 +32,7 @@ class TemporalKITTISet(Dataset):
 
         self.split = split
         self.seqs = seqs
-        self.use_ground_pred = use_ground_pred
 
-        # list of (shape_name, shape_txt_file_path) tuple
         self.datapath_pretrain()
         self.nr_data = len(self.points_datapath)
 
@@ -43,18 +41,14 @@ class TemporalKITTISet(Dataset):
     def datapath_pretrain(self):
         self.points_datapath = []
 
-        for seq in self.seqs:
-            point_seq_path = os.path.join(self.data_dir, 'dataset', 'sequences', seq, 'velodyne')
-            point_seq_bin = os.listdir(point_seq_path)
-            point_seq_bin.sort()
-            
-            for file_num in range(0, len(point_seq_bin), self.sampling_window):
-                end_file = file_num + self.scan_window if len(point_seq_bin) - file_num > self.scan_window else len(point_seq_bin)
-                self.points_datapath.append([os.path.join(point_seq_path, point_file) for point_file in point_seq_bin[file_num:end_file] ])
-                if end_file == len(point_seq_bin):
-                    break
+        # Load here you scans from data_dir
+        scans = os.listdir(self.data_dir)
 
-        #self.points_datapath = self.points_datapath[:10]
+        for file_num in range(0, len(scans), self.sampling_window):
+            end_file = file_num + self.scan_window if len(scans) - file_num > self.scan_window else len(scans)
+            self.points_datapath.append([scan_file for scan_file in scans[file_num:end_file] ])
+            if end_file == len(scans):
+                break
 
     def transforms(self, points):
         points = np.expand_dims(points, axis=0)
@@ -67,33 +61,19 @@ class TemporalKITTISet(Dataset):
 
         return np.squeeze(points, axis=0)
 
-    def datapath_list(self):
-        self.points_datapath = []
-        self.labels_datapath = []
-
-        for seq in self.seqs:
-            point_seq_path = os.path.join(self.data_dir, 'dataset', 'sequences', seq, 'velodyne')
-            point_seq_bin = os.listdir(point_seq_path)
-            point_seq_bin.sort()
-            self.points_datapath += [ os.path.join(point_seq_path, point_file) for point_file in point_seq_bin ]
-
-            label_seq_path = os.path.join(self.data_dir, 'dataset', 'sequences', seq, 'labels')
-            point_seq_label = os.listdir(label_seq_path)
-            point_seq_label.sort()
-            self.labels_datapath += [ os.path.join(label_seq_path, label_file) for label_file in point_seq_label ]
-
-    def __getitem__(self, index):
-        # define "namespace"
-        seq_num = self.points_datapath[index][0].split('/')[-3]
+    def _getitem__(self, index):
+        # get filename
         fname = self.points_datapath[index][0].split('/')[-1].split('.')[0]
 
         # cluster the aggregated pcd and save the result
-        cluster_path = os.path.join(self.data_dir, 'assets', self.augmented_dir, seq_num)
+        cluster_path = os.path.join(self.data_dir, 'assets', self.augmented_dir)
         if os.path.isfile(os.path.join(cluster_path, fname + '.seg')):
+            # if saved just load it
             segments = np.fromfile(os.path.join(cluster_path, fname + '.seg'), dtype=np.float16)
             segments = segments.reshape((-1, 1))
         else:
-            points_set, ground_label, parse_idx = aggregate_pcds(self.points_datapath[index], self.data_dir, self.use_ground_pred)
+            # if not generate segments and save it
+            points_set, ground_label, parse_idx = aggregate_pcds(self.points_datapath[index], self.data_dir)
             segments = clusterize_pcd(points_set, ground_label)
             segments[parse_idx] = -np.inf
             assert (segments.max() < np.finfo('float16').max), 'max segment id overflow float16 number'
@@ -106,7 +86,7 @@ class TemporalKITTISet(Dataset):
         if len(self.points_datapath[index]) == self.scan_window:
             t_frames = np.random.choice(np.arange(self.sampling_window), 2, replace=False)
             t_frames[1] = 2*self.sampling_window + t_frames[1]
-        # if it is the last sample from the seq (less samples than self.scan_window) sample two random scans (w/o begin-end restriction)
+        # if it is the last sample from the seq (less samples than self.scan_window) sample two random scans
         else:
             t_frames = np.random.choice(np.arange(len(self.points_datapath[index])), 2, replace=False)
 
@@ -117,7 +97,9 @@ class TemporalKITTISet(Dataset):
         p1 = np.fromfile(self.points_datapath[index][t_frames[0]], dtype=np.float32)
         p1 = p1.reshape((-1, 4))
         s1 = segments[pcd_parse_idx[t_frames[0]]+1:pcd_parse_idx[t_frames[0]+1]]
+        # concatenate after parsing the t_frame from the point cloud and the segments generated
         ps1 = np.concatenate((p1, s1), axis=-1)
+        # random augmentation
         ps1 = self.transforms(ps1)
         p1 = ps1[:,:-1]
         s1 = ps1[:,-1][:,np.newaxis]
@@ -126,7 +108,9 @@ class TemporalKITTISet(Dataset):
         p2 = np.fromfile(self.points_datapath[index][t_frames[1]], dtype=np.float32)
         p2 = p2.reshape((-1, 4))
         s2 = segments[pcd_parse_idx[t_frames[1]]+1:pcd_parse_idx[t_frames[1]+1]]
+        # concatenate after parsing the t_frame from the point cloud and the segments generated
         ps2 = np.concatenate((p2, s2), axis=-1)
+        # random augmentation
         ps2 = self.transforms(ps2)
         p2 = ps2[:,:-1]
         s2 = ps2[:,-1][:,np.newaxis]
@@ -137,10 +121,11 @@ class TemporalKITTISet(Dataset):
         # visualize_pcd_clusters(p, s)
         ##########################################
 
-        # we voxelize it here to avoid having a for loop during the collation
+        # Here the quantization for the voxels happens in case you don't need voxels just remove those two lines
         coord_t, feats_t, cluster_t = point_set_to_coord_feats(p1, s1, self.resolution, self.num_points)
         coord_tn, feats_tn, cluster_tn = point_set_to_coord_feats(p2, s2, self.resolution, self.num_points)
 
+        # guarantee that only overlapping segments will be in the t_frames randomly selected
         cluster_t, cluster_tn = overlap_clusters(cluster_t, cluster_tn)
 
         return (torch.from_numpy(coord_t), torch.from_numpy(feats_t), cluster_t, t_frames[0]), \

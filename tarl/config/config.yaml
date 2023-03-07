@@ -11,6 +11,7 @@ data:
     test: ['11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21']
     intensity: True
     percentage: '1.0'
+    use_ground_pred: True
 
 ##Training
 train:
@@ -19,7 +20,7 @@ train:
     scan_window: 12
     pre_train: True
     n_gpus: 1
-    num_workers: 8
+    num_workers: 0
     max_epoch: 200
     lr: 0.0002
     decay_lr: 1.0e-4

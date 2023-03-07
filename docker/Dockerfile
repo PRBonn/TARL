@@ -33,7 +33,7 @@ RUN rm -rf /var/lib/apt/lists/*
 RUN adduser --disabled-password --gecos '' tarl
 USER tarl
 
-WORKDIR /home/TARL/
+WORKDIR /home/TARL/tarl/
 # For faster build, use more jobs.
 ENV MAX_JOBS=4
 RUN pip install -U git+https://github.com/NVIDIA/MinkowskiEngine -v --no-deps \

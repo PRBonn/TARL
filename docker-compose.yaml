@@ -7,5 +7,5 @@ services:
                       - NVIDIA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES
                 volumes: 
                       - $PWD:/home/TARL
-                      - $PWD/Datasets/:/home/TARL/Datasets
+                      - $PWD/Datasets/:/home/TARL/tarl/Datasets
 

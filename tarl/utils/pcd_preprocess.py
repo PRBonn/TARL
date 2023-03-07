@@ -72,7 +72,7 @@ def undo_transform(points, pose):
     hpoints = np.hstack((points[:, :3], np.ones_like(points[:, :1])))
     return np.sum(np.expand_dims(hpoints, 2) * np.linalg.inv(pose).T, axis=1)[:,:3]
 
-def aggregate_pcds(data_batch, data_dir):
+def aggregate_pcds(data_batch, data_dir, use_ground_label=True):
     # load empty pcd point cloud to aggregate
     points_set = np.empty((0,4))
 
@@ -90,20 +90,28 @@ def aggregate_pcds(data_batch, data_dir):
     poses = load_poses(os.path.join(datapath, 'calib.txt'), os.path.join(datapath, 'poses.txt'))
     
     for t in range(len(data_batch)):
-        # load the next t scan and aggregate
-        gname = data_batch[t].split('/')[-1].split('.')[0]
-        g_set = np.fromfile(os.path.join(data_dir, 'assets', 'patchwork', seq_num, gname + '.label'), dtype=np.uint32)
-        g_set = g_set.reshape((-1))[:, np.newaxis]
-        # aggregate a delimiter and the next scan
-        ground_label = np.vstack([ground_label, g_delimiter, g_set])
-
+        fname = data_batch[t].split('/')[-1].split('.')[0]
         # load the next t scan, apply pose and aggregate
         p_set = np.fromfile(data_batch[t], dtype=np.float32)
         p_set = p_set.reshape((-1, 4))
-        pose_idx = int(gname)
+        pose_idx = int(fname)
         p_set[:,:3] = apply_transform(p_set[:,:3], poses[pose_idx])
         # aggregate a delimiter and the next scan
         points_set = np.vstack([points_set, p_delimiter, p_set])
+
+        if use_ground_label:
+            # load the next t scan and aggregate
+            g_set = np.fromfile(os.path.join(data_dir, 'assets', 'patchwork', seq_num, fname + '.label'), dtype=np.uint32)
+            g_set = g_set.reshape((-1))[:, np.newaxis]
+        else:
+            pcd = o3d.geometry.PointCloud()
+            pcd.points = o3d.utility.Vector3dVector(p_set[:,:3])
+            _, inliers = pcd.segment_plane(distance_threshold=0.25, ransac_n=3, num_iterations=200)
+            g_set = np.ones((len(p_set),1)) * 251
+            g_set[inliers] = 9
+
+        # aggregate a delimiter and the next scan
+        ground_label = np.vstack([ground_label, g_delimiter, g_set])
 
     ground_label = np.vstack([ground_label, g_delimiter])
     points_set = np.vstack([points_set, p_delimiter])
