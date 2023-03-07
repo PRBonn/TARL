@@ -8,4 +8,5 @@ services:
                 volumes: 
                       - $PWD:/home/TARL
                       - $PWD/Datasets/:/home/TARL/tarl/Datasets
+                      - $PWD/tarl/experiments:/home/TARL/tarl/experiments
 
