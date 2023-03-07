@@ -82,6 +82,16 @@ In the `config/config.yaml` the parameters used in our experiments are already s
 Note that, the first epoch will take longer to train since we generate the segments over the aggregated scans and save them to disk. However, after
 the first epoch the training should be first since it is just necessary to load the segments from disk.
 
+## Docker
+
+We have also a `Dockerfile` in `docker/` directory to make things easy to run. You can build the docker image with:
+
+```docker build . -t nuneslu/tarl:latest```
+
+And then run it with:
+
+```CUDA_VISIBLE_DEVICES=0 docker-compose run pretrain python3 tarl_train.py```
+
 ## Pre-trained weights
 
 - TARL MinkUNet pre-trained [weights](https://www.ipb.uni-bonn.de/html/projects/tarl/lastepoch199_model_tarl.pt)
