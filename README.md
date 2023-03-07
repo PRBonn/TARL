@@ -86,9 +86,11 @@ the remaining packages missing.
 
 After setting up the packages, copy the pre-trained model from `TARL/tarl/experiments/TARL/default/version_0/checkpoints/last.ckpt` to `segcontrast/checkpoint/contrastive/lastepoch199_model_tarl.pt` and run the following command:
 
-```python3 downstream_train.py --use-cuda --use-intensity --checkpoint \
+```
+python3 downstream_train.py --use-cuda --use-intensity --checkpoint \
         tarl --contrastive --load-checkpoint --batch-size 2 \
-        --sparse-model MinkUNet --epochs 15```
+        --sparse-model MinkUNet --epochs 15
+```
 
 # Object detection
 
