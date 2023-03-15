@@ -107,6 +107,15 @@ For fine-tuning we have used repositories from the baselines, so after pre-train
 
 ## Semantic segmentation
 
+|Method         | Scribbles | 0.1% | 1% | 10% | 50% | 100% |
+|----------------|-----------|--------|--------|--------|--------|--------|
+|No pre-training         | 54.96% | 29.35% | 42.77% | 53.96% | 58.27% | 59.03% |
+|PointContrast   | 54.52% | 32.63% | 44.62% | 58.68% | 59.98% | 61.45% |
+|DepthContrast   | 55.90% | 31.66% | 48.05% | 57.11% | 60.99% | 61.14% |
+|SegContrast     | 56.70% | 32.75% | 44.83% | 56.31% | 60.45% | 61.02% |
+|**TARL (Ours)** |**57.25%**|**38.59%**|**51.42%**|**60.34%**|**61.42%**|**61.47%**|
+
+
 For fine-tuning to semantic segmentation we refer to the SegContrast [repo](https://github.com/PRBonn/segcontrast).
 Clone the repo with `git clone https://github.com/PRBonn/segcontrast.git` and follow the installation instructions. Note that the requirements from
 TARL and segcontrast are similar since both use `MinkowskiEngine` so you should be able to use the same environment than TARL just installing
