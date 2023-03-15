@@ -134,7 +134,7 @@ python3 train.py --cfg_file cfgs/kitti_models/tarl_pretrained.yaml --pretrained_
 If you use this repo, please cite as :
 
 ```
-@inproceedings{nunes2022cvpr,
+@inproceedings{nunes2023cvpr,
     author = {L. Nunes and L. Wiesmann and R. Marcuzzi and X. Chen and J. Behley and C. Stachniss},
     title = {{Temporal Consistent 3D LiDAR Representation Learning for Semantic Perception in Autonomous Driving}},
     booktitle = {{Proc. of the IEEE/CVF Conf. on Computer Vision and Pattern Recognition (CVPR)}},
