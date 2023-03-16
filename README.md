@@ -72,6 +72,9 @@ our pre-training.
 from Open3D which would give also a ground estimation (as done by SegContrast). We have also implemented this option you could use ransac by setting
 in the config file the flag `use_ground_pred: False`. However, we recommend using patchwork since the ground segmentation is more accurate.
 
+## Custom dataset
+
+To use our pre-training with a different dataset we provide some few instructions on how to do it at [NEW_DATA.md](https://github.com/PRBonn/TARL/blob/main/tarl/datasets/NEW_DATA.md).
 
 ## Running the code
 
