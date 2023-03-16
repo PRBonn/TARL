@@ -1,4 +1,4 @@
-# Training on you data
+# Training on your data
 
 We have implemented the pre-training for SemanticKITTI, however the pre-training can be applied to different datasets.
 Your data should have only the LiDAR point clouds and the scan-wise poses, to aggregate the point clouds. In case poses are not available, you can use
