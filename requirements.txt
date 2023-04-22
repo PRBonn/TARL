@@ -7,4 +7,4 @@ pytorch_lightning==1.5.10
 hdbscan==0.8.28
 open3d==0.13.0
 scipy
-joblib==1.1.0
+joblib==1.1.1
