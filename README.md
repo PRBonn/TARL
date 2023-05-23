@@ -1,6 +1,6 @@
 # TARL: Temporal Consistent 3D LiDAR Representation Learning for Semantic Perception in Autonomous Driving
 
-**[Paper](http://www.ipb.uni-bonn.de/pdfs/nunes2023cvpr.pdf)** **|** **[Sup. material](http://www.ipb.uni-bonn.de/pdfs/nunes2023cvpr-supmaterial.pdf)** **|** [Video](https://www.youtube.com/watch?v=0CtDbwRYLeo)
+**[Paper](http://www.ipb.uni-bonn.de/pdfs/nunes2023cvpr.pdf)** **|** **[Sup. material](http://www.ipb.uni-bonn.de/pdfs/nunes2023cvpr-supmaterial.pdf)** **|** **[Video](https://www.youtube.com/watch?v=0CtDbwRYLeo)**
 
 This repo contains the code for the self-supervised pre-training method proposed in the CVPR'23 paper: Temporal Consistent 3D LiDAR Representation Learning for Semantic Perception in Autonomous Driving.
 
