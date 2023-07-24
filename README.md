@@ -124,7 +124,7 @@ For fine-tuning we have used repositories from the baselines, so after pre-train
 For fine-tuning to semantic segmentation we refer to the SegContrast [repo](https://github.com/PRBonn/segcontrast).
 Clone the repo with `git clone https://github.com/PRBonn/segcontrast.git` and follow the installation instructions. Note that the requirements from
 TARL and segcontrast are similar since both use `MinkowskiEngine` so you should be able to use the same environment than TARL just installing
-the remaining packages missing.
+the remaining packages missing. **NOTE:** we **replaced** SegContrast optimizer from *`SGD`* to **`AdamW`** and **removed** the learning rate scheduler.
 
 After setting up the packages, copy the pre-trained model from `TARL/tarl/experiments/TARL/default/version_0/checkpoints/last.ckpt` to `segcontrast/checkpoint/contrastive/lastepoch199_model_tarl.pt` and run the following command:
 
