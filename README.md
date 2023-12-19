@@ -134,6 +134,10 @@ python3 downstream_train.py --use-cuda --use-intensity --checkpoint \
         --sparse-model MinkUNet --epochs 15
 ```
 
+# Panoptic segmentation
+
+For the panoptic segmentation task, we refer to this [repo](https://github.com/PRBonn/MinkowskiPanoptic) where we have our implementation for the baseline used to evaluate this task in the paper.
+
 # Object detection
 
 For object detection we have used the OpenPCDet [repo](https://github.com/zaiweizhang/OpenPCDet) with few modifications. In this docker [image](https://hub.docker.com/r/nuneslu/segcontrast_openpcdet) we have setted up everything to run it with `MinkUNet` and to load our pre-trained weights.
@@ -143,6 +147,7 @@ The weights should be copied to `/tmp/OpenPCDet/pretrained/lastepoch199_model_ta
 cd /tmp/OpenPCDet/tools
 python3 train.py --cfg_file cfgs/kitti_models/tarl_pretrained.yaml --pretrained_model ../pretrained/lastepoch199_model_tarl.pt
 ```
+
 # Citation
 
 If you use this repo, please cite as :
